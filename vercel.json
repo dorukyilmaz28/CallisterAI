@@ -2,19 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build/client",
   "framework": "vite",
-  "functions": {
-    "build/server/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/build/server/index.js"
     }
   ]
 }
