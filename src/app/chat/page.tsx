@@ -1,4 +1,4 @@
-import { FRCChat } from "../../components/FRCChat";
+import { FRCChat } from "@/components/FRCChat";
 
 export const metadata = {
   title: "Callister FRC AI Assistant - Chat",
