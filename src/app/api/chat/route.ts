@@ -27,13 +27,12 @@ export async function POST(req: NextRequest) {
     ];
 
     // API key'i environment variable'dan al
-    console.log("API key:", process.env.OPENROUTER_API_KEY);
     const apiKey = process.env.OPENROUTER_API_KEY;
     
     if (!apiKey) {
       console.error("OPENROUTER_API_KEY environment variable is not set");
       return NextResponse.json(
-        { error: "API key yapılandırılmamış. Lütfen OPENROUTER_API_KEY environment variable'ını ayarlayın." },
+        { error: "API key yapılandırılmamış. Lütfen Vercel dashboard'da OPENROUTER_API_KEY environment variable'ını ayarlayın." },
         { status: 500 }
       );
     }
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:3000", // Next.js default port
+        "HTTP-Referer": process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000",
         "X-Title": "Callister FRC AI Assistant",
       },
       body: JSON.stringify({
@@ -67,9 +66,19 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       console.error("OpenRouter Error:", rawText);
+      let errorMessage = "OpenRouter API hatası";
+      
+      if (res.status === 401) {
+        errorMessage = "API key geçersiz veya süresi dolmuş. Lütfen Vercel dashboard'da OPENROUTER_API_KEY'i kontrol edin.";
+      } else if (res.status === 429) {
+        errorMessage = "API rate limit aşıldı. Lütfen birkaç dakika bekleyin.";
+      } else if (res.status === 402) {
+        errorMessage = "API kredisi yetersiz. Lütfen OpenRouter hesabınızı kontrol edin.";
+      }
+      
       return NextResponse.json(
         { 
-          error: "OpenRouter API hatası", 
+          error: errorMessage, 
           status: res.status,
           details: rawText.substring(0, 200) // İlk 200 karakter
         }, 
