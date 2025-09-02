@@ -2,11 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build/client",
   "framework": "vite",
-  "functions": {
-    "app/routes/api.chat.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
