@@ -1,13 +1,5 @@
-import type { Route } from "./+types/home";
-import { Link } from "react-router";
-import { Bot, Target, Wrench, Cpu, ArrowRight, Play, Users, Trophy, Zap } from "lucide-react";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Callister FRC AI Assistant" },
-    { name: "description", content: "Callister FRC AI Assistant - FRC robot yarışması için yapay zeka asistanı" },
-  ];
-}
+import Link from "next/link";
+import { Bot, Target, Wrench, Cpu, ArrowRight, Play, Trophy, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -19,7 +11,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
-                            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+              <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
                 <img
                   src="/8f28b76859c1479d839d270409be3586.jpg"
                   alt="Callister Logo"
@@ -43,7 +35,7 @@ export default function Home() {
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/chat"
+                  href="/chat"
                   className="inline-flex items-center space-x-2 sm:space-x-3 bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold text-base sm:text-lg hover:bg-white/30 transition-all duration-300 shadow-2xl hover:shadow-white/25 transform hover:-translate-y-1 border border-white/30"
                 >
                   <Play className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -212,7 +204,7 @@ export default function Home() {
             Callister AI asistanınızla robot tasarımından yarışma stratejisine kadar her adımda yanınızda.
           </p>
           <Link
-            to="/chat"
+            href="/chat"
             className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-sm text-white px-12 py-5 rounded-2xl font-bold text-xl hover:bg-white/30 transition-all duration-300 shadow-2xl hover:shadow-white/25 transform hover:-translate-y-1 border border-white/30"
           >
             <span>Callister AI ile Sohbet Et</span>
@@ -225,7 +217,7 @@ export default function Home() {
       <div className="py-8 border-t border-white/10" style={{ background: 'linear-gradient(135deg, #3A006F 0%, #5A008F 50%, #8A00FF 100%)' }}>
         <div className="container mx-auto px-4 text-center">
           <p className="text-gray-400 text-sm">
-            Powered by OpenRouter API • DeepSeek Model • Built with React Router v7
+            Powered by OpenRouter API • DeepSeek Model • Built with Next.js
           </p>
         </div>
       </div>

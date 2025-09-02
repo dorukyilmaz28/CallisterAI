@@ -1,6 +1,8 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router";
-import { Send, Bot, User, Settings, Wrench, Target, Cpu, Moon, Sun, Home } from "lucide-react";
+import Link from "next/link";
+import { Send, Bot, User, Settings, Wrench, Target, Cpu, Home } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -43,7 +45,6 @@ export function FRCChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedContext, setSelectedContext] = useState<Context>("general");
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [isDarkMode] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -117,7 +118,7 @@ export function FRCChat() {
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: 'linear-gradient(135deg, #3A006F 0%, #5A008F 50%, #8A00FF 100%)' }}>
-            {/* Header */}
+      {/* Header */}
       <div className="border-b border-white/20 p-3 sm:p-4" style={{ background: 'linear-gradient(135deg, #3A006F 0%, #5A008F 50%, #8A00FF 100%)' }}>
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3">
@@ -127,17 +128,17 @@ export function FRCChat() {
               className="w-8 h-8 sm:w-12 sm:h-12 object-cover rounded-xl"
             />
             <div className="min-w-0 flex-1">
-              <h1 className={`text-sm sm:text-xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+              <h1 className="text-sm sm:text-xl font-bold text-white truncate">
                 Callister FRC AI Assistant
               </h1>
-              <p className={`text-xs sm:text-sm transition-colors ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} truncate`}>
+              <p className="text-xs sm:text-sm text-gray-400 truncate">
                 {contextConfig[selectedContext].description}
               </p>
             </div>
           </div>
           <div className="flex items-center space-x-1 sm:space-x-2">
             <Link
-              to="/"
+              href="/"
               className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-lg transition-colors duration-200 bg-white/20 hover:bg-white/30 text-white"
             >
               <Home className="w-3 h-3 sm:w-4 sm:h-4" />

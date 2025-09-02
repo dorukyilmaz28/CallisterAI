@@ -1,8 +1,8 @@
-import type { Route } from "./+types/api.chat";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function action({ request }: Route.ActionArgs) {
+export async function POST(req: NextRequest) {
   try {
-    const { messages, context } = await request.json();
+    const { messages, context } = await req.json();
 
     // Context'e göre system prompt
     let systemPrompt = "";
@@ -32,7 +32,7 @@ export async function action({ request }: Route.ActionArgs) {
     
     if (!apiKey) {
       console.error("OPENROUTER_API_KEY environment variable is not set");
-      return Response.json(
+      return NextResponse.json(
         { error: "API key yapılandırılmamış. Lütfen OPENROUTER_API_KEY environment variable'ını ayarlayın." },
         { status: 500 }
       );
@@ -48,15 +48,15 @@ export async function action({ request }: Route.ActionArgs) {
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:5173", // Optional. Site URL for rankings on openrouter.ai.
-        "X-Title": "FRC AI Assistant", // Optional. Site title for rankings on openrouter.ai.
+        "HTTP-Referer": "http://localhost:3000", // Next.js default port
+        "X-Title": "Callister FRC AI Assistant",
       },
-              body: JSON.stringify({
-          model: "deepseek/deepseek-chat-v3.1:free",
-          messages: optimizedMessages,
-          max_tokens: 4000, // Çok daha uzun yanıtlar için
-          temperature: 0.7,
-        }),
+      body: JSON.stringify({
+        model: "deepseek/deepseek-chat-v3.1:free",
+        messages: optimizedMessages,
+        max_tokens: 4000, // Çok daha uzun yanıtlar için
+        temperature: 0.7,
+      }),
     });
 
     console.log("HTTP Status:", res.status);
@@ -67,7 +67,7 @@ export async function action({ request }: Route.ActionArgs) {
 
     if (!res.ok) {
       console.error("OpenRouter Error:", rawText);
-      return Response.json(
+      return NextResponse.json(
         { 
           error: "OpenRouter API hatası", 
           status: res.status,
@@ -83,15 +83,25 @@ export async function action({ request }: Route.ActionArgs) {
       completion = JSON.parse(rawText);
     } catch (parseError) {
       console.error("JSON Parse Error:", parseError);
-      return Response.json(
+      return NextResponse.json(
         { error: "API yanıtı parse edilemedi", raw: rawText.substring(0, 200) },
         { status: 500 }
       );
     }
 
-    const aiResponse = completion.choices?.[0]?.message?.content || "Üzgünüm, bir yanıt oluşturamadım.";
+    let aiResponse = completion.choices?.[0]?.message?.content || "Üzgünüm, bir yanıt oluşturamadım.";
+    
+    // AI yanıtındaki istenmeyen token'ları temizle
+    aiResponse = aiResponse
+      .replace(/REDACTED_SPECIAL_TOKEN/g, '')
+      .replace(/REDACTED.*?TOKEN/g, '')
+      .replace(/\[REDACTED.*?\]/g, '')
+      .replace(/<\| begin_of_sentence \|>/g, '')
+      .replace(/<\| end_of_sentence \|>/g, '')
+      .replace(/<\|.*?\|>/g, '')
+      .trim();
 
-    return Response.json({
+    return NextResponse.json({
       messages: [...messages, { role: "assistant", content: aiResponse }],
       context,
       timestamp: new Date().toISOString(),
@@ -100,7 +110,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   } catch (error: any) {
     console.error("Route Error:", error);
-    return Response.json(
+    return NextResponse.json(
       {
         error: "AI servisine erişilemiyor.",
         details: error.message,
