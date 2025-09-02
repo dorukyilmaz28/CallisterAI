@@ -14,3 +14,7 @@
 # Cache
 .cache/
 *.log
+
+# Next.js
+.next/
+out/
