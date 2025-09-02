@@ -245,6 +245,9 @@ export function FRCChat() {
                         .replace(/<\| begin_of_sentence \|>/g, '')
                         .replace(/<\| end_of_sentence \|>/g, '')
                         .replace(/<\|.*?\|>/g, '')
+                        .replace(/REDACTED_SPECIAL_TOKEN/g, '')
+                        .replace(/REDACTED.*?TOKEN/g, '')
+                        .replace(/\[REDACTED.*?\]/g, '')
                     }}
                   />
                 </div>
