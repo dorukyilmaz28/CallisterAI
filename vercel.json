@@ -5,8 +5,5 @@
       "src": "package.json",
       "use": "@vercel/next"
     }
-  ],
-  "env": {
-    "OPENROUTER_API_KEY": "@openrouter_api_key"
-  }
+  ]
 }
