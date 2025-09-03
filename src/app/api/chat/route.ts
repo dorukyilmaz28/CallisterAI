@@ -2,7 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("=== API Route Başladı ===");
+    console.log("Environment:", process.env.NODE_ENV);
+    console.log("Vercel URL:", process.env.VERCEL_URL);
+    
     const { messages, context } = await req.json();
+    console.log("Request data:", { messagesCount: messages?.length, context });
+    
+    // Son kullanıcı mesajını kontrol et
+    const lastUserMessage = messages[messages.length - 1];
+    if (lastUserMessage && lastUserMessage.role === "user") {
+      const charCount = lastUserMessage.content.trim().length;
+      if (charCount > 200) {
+        return NextResponse.json(
+          { 
+            error: "Mesajınız çok uzun. Maksimum 200 karakter kullanabilirsiniz.",
+            charCount,
+            maxChars: 200
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     // Context'e göre system prompt
     let systemPrompt = "";
@@ -29,16 +50,27 @@ export async function POST(req: NextRequest) {
     // API key'i environment variable'dan al
     const apiKey = process.env.OPENROUTER_API_KEY;
     
+    console.log("API Key check:", {
+      exists: !!apiKey,
+      length: apiKey?.length || 0,
+      startsWith: apiKey?.substring(0, 10) || "N/A"
+    });
+    
     if (!apiKey) {
       console.error("OPENROUTER_API_KEY environment variable is not set");
       return NextResponse.json(
-        { error: "API key yapılandırılmamış. Lütfen Vercel dashboard'da OPENROUTER_API_KEY environment variable'ını ayarlayın." },
+        { 
+          error: "API key yapılandırılmamış. Lütfen Vercel dashboard'da OPENROUTER_API_KEY environment variable'ını ayarlayın.",
+          debug: {
+            env: process.env.NODE_ENV,
+            vercelUrl: process.env.VERCEL_URL,
+            hasApiKey: !!process.env.OPENROUTER_API_KEY
+          }
+        },
         { status: 500 }
       );
     }
     
-    console.log("API Key:", apiKey ? "✅ Var" : "❌ Yok");
-    console.log("API Key length:", apiKey.length);
     console.log("Messages count:", optimizedMessages.length);
 
     // OpenRouter API çağrısı
